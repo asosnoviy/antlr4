@@ -70,6 +70,8 @@ public class LexerATNSimulator extends ATNSimulator {
 	/** The index of the character relative to the beginning of the line 0..n-1 */
 	protected int charPositionInLine = 0;
 
+	/** Flag - CR-token was found */
+	protected boolean lastCharWasCR;
 
 	public final DFA[] decisionToDFA;
 	protected int mode = Lexer.DEFAULT_MODE;
@@ -740,8 +742,14 @@ public class LexerATNSimulator extends ATNSimulator {
 			charPositionInLine=0;
 		}
 		else {
-			charPositionInLine++;
+			if (lastCharWasCR) {
+				line++;
+				charPositionInLine=0;
+			} else {
+				charPositionInLine++;
+			}
 		}
+		lastCharWasCR = curChar == '\r';
 		input.consume();
 	}
 
